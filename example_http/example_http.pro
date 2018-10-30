@@ -15,6 +15,7 @@ INCLUDEPATH += /usr/local/boost-1.67/include
 LIBS += /usr/local/boost-1.67/lib/libboost_system.so
 LIBS += /usr/lib/x86_64-linux-gnu/libpthread.so
 LIBS += /usr/lib/x86_64-linux-gnu/librt.so
+LIBS += /usr/lib/x86_64-linux-gnu/libjsoncpp.so
 
 # The following define makes your compiler warn you if you use any
 # feature of Qt which has been marked as deprecated (the exact warnings
