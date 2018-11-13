@@ -11,8 +11,8 @@ QMAKE_CXXFLAGS += -std=c++11
 CONFIG += debug_and_release
 CONFIG -= qt
 
-INCLUDEPATH += /usr/local/boost-1.67/include
-LIBS += /usr/local/boost-1.67/lib/libboost_system.so
+INCLUDEPATH += /usr/local/boost-1.65/include
+LIBS += /usr/local/boost-1.65/lib/libboost_system.so
 LIBS += /usr/lib/x86_64-linux-gnu/libpthread.so
 LIBS += /usr/lib/x86_64-linux-gnu/librt.so
 LIBS += /usr/lib/x86_64-linux-gnu/libjsoncpp.so

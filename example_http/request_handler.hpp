@@ -23,6 +23,9 @@ public:
     /// Handle a request and produce a reply.
     void handle_request(const request& req, reply& rep);
 
+protected:
+    std::string CurrentTime();
+
 private:
     /// The directory containing the files to be served.
     std::string doc_root_;//文件目录

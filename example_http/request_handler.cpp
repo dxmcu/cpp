@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <chrono>
 #include <jsoncpp/json/json.h>
 #include "mime_types.hpp"
 #include "reply.hpp"
@@ -114,6 +115,53 @@ void request_handler::handle_request(const request& req, reply& rep)
         rep.content = Json::writeString(builder, root);
     }
 
+    else if (req.uri == "/gs-robot/data/maps")
+    {
+        Json::Value root, data;
+        Json::Value item;
+        item["createdAt"] = this->CurrentTime();
+        item["dataFileName"] = "40dd8fcd-5e6d-4890-b620-88882d9d3977.data";
+        item["id"] = 0;
+        Json::Value mapInfo;
+        mapInfo["gridHeight"] = 992;
+        mapInfo["gridWidth"] = 992;
+        mapInfo["originX"] = -24.8;
+        mapInfo["originY"] = -24.8;
+        mapInfo["resolution"] = 0.05;
+        item["mapInfo"] = mapInfo;
+        item["name"] = "demo";
+        item["obstacleFileName"] = "";
+        item["pgmFileName"] = "6a3e7cae-c4a8-4583-9a5d-08682344647a.pgm";
+        item["pngFileName"] = "228b335f-8c1a-4f05-a292-160f942cbe00.png";
+        item["yamlFileName"] = "4108be8c-4004-4ad6-a9c5-599b4a3d49df.yaml";
+        data.append(item);
+        Json::Value item2;
+        item2["createdAt"] = "2016-07-27 23:37:31";
+        item2["dataFileName"] = "df5ff3c6-ac5c-4365-a89a-ca0128057006.data";
+        item2["id"] = 0;
+        Json::Value mapInfo2;
+        mapInfo2["gridHeight"] = 992;
+        mapInfo2["gridWidth"] = 992;
+        mapInfo2["originX"] = -24.8;
+        mapInfo2["originY"] = -24.8;
+        mapInfo2["resolution"] = 0.05;
+        item2["mapInfo"] = mapInfo2;
+        item2["name"] = "tom5";
+        item2["obstacleFileName"] = "";
+        item2["pgmFileName"] = "8768e979-6a27-46db-a479-b729036970b3.pgm";
+        item2["pngFileName"] = "5ef8bd27-5ffa-4c44-8f25-2f2811d0d2e8.png";
+        item2["yamlFileName"] = "e2c0cc20-6ee8-4ce9-91c0-1fe1fce39857.yaml";
+        data.append(item2);
+        root["data"] = data;
+        root["errorCode"] = "";
+        root["msg"] = "successed";
+        root["successed"] = true;
+
+        Json::StreamWriterBuilder builder;
+        builder["indentation"] = "";
+        rep.content = Json::writeString(builder, root);
+    }
+
     //响应头
     rep.headers.resize(2);
     rep.headers[0].name = "Content-Length";
@@ -160,6 +208,19 @@ bool request_handler::url_decode(const std::string& in, std::string& out)
     }
     return true;
 }//解析url
+
+std::string request_handler::CurrentTime()
+{
+    std::time_t tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    struct tm* ptm = localtime(&tt);
+
+    std::stringbuf buf;
+    std::ostream os(&buf);
+    os << ptm->tm_year + 1900 << "-" << ptm->tm_mon + 1 << "-" << ptm->tm_mday << " " <<
+          ptm->tm_hour << ":" << ptm->tm_min << ";" << ptm->tm_sec;
+    return buf.str();
+}
+
 
 } // namespace server
 } // namespace http
