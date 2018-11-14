@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <chrono>
+#include <fstream>
 #include <jsoncpp/json/json.h>
 #include "mime_types.hpp"
 #include "reply.hpp"
@@ -19,7 +20,7 @@ request_handler::request_handler(const std::string& doc_root)
 
 void request_handler::handle_request(const request& req, reply& rep)
 {//解析请求
-
+    //std::cout << req.uri << std::endl;
     if (req.uri == "/gs-robot/cmd/is_initialize_finished")
     {
         Json::Value root;
@@ -136,7 +137,7 @@ void request_handler::handle_request(const request& req, reply& rep)
         item["yamlFileName"] = "4108be8c-4004-4ad6-a9c5-599b4a3d49df.yaml";
         data.append(item);
         Json::Value item2;
-        item2["createdAt"] = "2016-07-27 23:37:31";
+        item2["createdAt"] = this->CurrentTime();
         item2["dataFileName"] = "df5ff3c6-ac5c-4365-a89a-ca0128057006.data";
         item2["id"] = 0;
         Json::Value mapInfo2;
@@ -160,6 +161,75 @@ void request_handler::handle_request(const request& req, reply& rep)
         Json::StreamWriterBuilder builder;
         builder["indentation"] = "";
         rep.content = Json::writeString(builder, root);
+    }
+
+    else if (req.uri.find("/gs-robot/data/positions") == 0)
+    {
+        std::size_t pos = req.uri.find_last_of('=');
+        std::string strMapName = req.uri.substr(pos + 1);
+        Json::Value root, data;
+        Json::Value item;
+        item["angle"] = -4.72;
+        item["createdAt"] = this->CurrentTime();
+        item["gridX"] = 458;
+        item["gridY"] = 238;
+        item["id"] = 0;
+        item["mapId"] = 0;
+        item["mapName"] = strMapName;
+        item["name"] = "demo_position";
+        item["type"] = 0;
+        Json::Value worldPose, orientation, position;
+        orientation["w"] = 0.999;
+        orientation["x"] = 0;
+        orientation["y"] = 0;
+        orientation["z"] = -0.041;
+        worldPose["orientation"] = orientation;
+        position["x"] = -1.873;
+        position["y"] = -12.877;
+        position["z"] = 0;
+        worldPose["position"] = position;
+        item["worldPose"] = worldPose;
+        data.append(item);
+        Json::Value item2;
+        item2["angle"] = 4.566;
+        item2["createdAt"] = this->CurrentTime();
+        item2["gridX"] = 253;
+        item2["gridY"] = 315;
+        item2["id"] = 0;
+        item2["mapId"] = 0;
+        item2["mapName"] = strMapName;
+        item2["name"] = "demo_position1";
+        item2["type"] = 1;
+        Json::Value worldPose2, orientation2, position2;
+        orientation2["w"] = 0.999;
+        orientation2["x"] = 0;
+        orientation2["y"] = 0;
+        orientation2["z"] = 0.0398;
+        worldPose2["orientation"] = orientation2;
+        position2["x"] = -12.137;
+        position2["y"] = -9.006;
+        position2["z"] = 0;
+        worldPose2["position"] = position2;
+        item2["worldPose"] = worldPose2;
+        data.append(item2);
+        root["data"] = data;
+        root["errorCode"] = "";
+        root["msg"] = "successed";
+        root["successed"] = true;
+
+        Json::StreamWriterBuilder builder;
+        builder["indentation"] = "";
+        rep.content = Json::writeString(builder, root);
+    }
+    else if(req.uri.find("/gs-robot/data/map_png") == 0)
+    {
+        std::size_t pos = req.uri.find_last_of('=');
+        std::string strMapName = req.uri.substr(pos + 1);
+        strMapName = "./" + strMapName + ".png";
+        std::ifstream ifs(strMapName);
+        std::stringstream buf;
+        buf << ifs.rdbuf();
+        rep.content = buf.str();
     }
 
     //响应头
@@ -217,7 +287,7 @@ std::string request_handler::CurrentTime()
     std::stringbuf buf;
     std::ostream os(&buf);
     os << ptm->tm_year + 1900 << "-" << ptm->tm_mon + 1 << "-" << ptm->tm_mday << " " <<
-          ptm->tm_hour << ":" << ptm->tm_min << ";" << ptm->tm_sec;
+          ptm->tm_hour << ":" << ptm->tm_min << ":" << ptm->tm_sec;
     return buf.str();
 }
 
