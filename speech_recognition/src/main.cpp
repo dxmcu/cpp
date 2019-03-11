@@ -2,6 +2,7 @@
 #include "speech_recognition/msp_cmn.h"
 #include "speech_recognition/msp_errors.h"
 #include "speech_recognition/speech_recognition.h"
+#include "speech_recognition/text_to_speech.h"
 
 int main(int argc, char ** argv)
 {
@@ -15,11 +16,15 @@ int main(int argc, char ** argv)
         exit(-1);
     }
 
-    SpeechRecognition Recognition;
-    Recognition.Start();
+    SpeechRecognition recognition;
+    recognition.Start();
+
+    TextToSpeech speech;
+    speech.Start();
 
     getchar();
-    Recognition.Stop();
+    recognition.Stop();
+    speech.Stop();
     MSPLogout(); //退出登录
 
     return 0;

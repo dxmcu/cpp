@@ -26,6 +26,7 @@ target_include_directories(speech_recognition PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
+target_sources(speech_recognition PRIVATE src/text_to_speech.cpp)
 target_sources(speech_recognition PRIVATE src/speech_recognition.cpp)
 target_sources(speech_recognition PRIVATE src/speech_recognizer.c)
 target_sources(speech_recognition PRIVATE src/linuxrec.c)

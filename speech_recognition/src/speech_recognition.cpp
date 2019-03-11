@@ -124,7 +124,7 @@ void SpeechRecognition::DemoMic(const char* session_begin_params)
     }
     /* demo 15 seconds recording */
     while(m_nFlagRecognized == 0)
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
     if (m_nFlagRecognized == 1)
     {
