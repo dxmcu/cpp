@@ -6,10 +6,12 @@
 #include <atomic>
 #include "speech_recognition/speech_recognizer.h"
 
+class Application;
+
 class SpeechRecognition
 {
 public:
-    SpeechRecognition();
+    SpeechRecognition(Application &);
     ~SpeechRecognition();
 
     void Start();
@@ -25,6 +27,9 @@ private:
     std::unique_ptr<std::thread> m_pThreadRestart;
     struct speech_rec iat;
     std::atomic_int m_nFlagRecognized; //0: start, 1: stop, 2: stop with restart
+
+public:
+    Application &m_rApplication;
 };
 
 #endif // SPEECH_RECOGNITION_H

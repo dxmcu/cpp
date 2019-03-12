@@ -17,25 +17,28 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
 
 add_executable(speech_recognition src/main.cpp)
+ament_target_dependencies(speech_recognition rclcpp std_msgs)
 target_include_directories(speech_recognition PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
+target_sources(speech_recognition PRIVATE src/application.cpp)
 target_sources(speech_recognition PRIVATE src/text_to_speech.cpp)
 target_sources(speech_recognition PRIVATE src/speech_recognition.cpp)
 target_sources(speech_recognition PRIVATE src/speech_recognizer.c)
 target_sources(speech_recognition PRIVATE src/linuxrec.c)
+target_sources(speech_recognition PRIVATE common/messagetranslate.hpp)
 
 target_link_libraries(speech_recognition msc)
 target_link_libraries(speech_recognition rt)
 target_link_libraries(speech_recognition dl)
 target_link_libraries(speech_recognition pthread)
 target_link_libraries(speech_recognition asound)
+target_link_libraries(speech_recognition jsoncpp)
 
 
 install(TARGETS speech_recognition

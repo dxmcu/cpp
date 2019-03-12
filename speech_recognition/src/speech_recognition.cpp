@@ -6,20 +6,25 @@
 #include "speech_recognition/qisr.h"
 #include "speech_recognition/msp_cmn.h"
 #include "speech_recognition/msp_errors.h"
+#include "speech_recognition/application.h"
 
 #define FRAME_LEN	640
 #define	BUFFER_SIZE	4096
 
-static void show_result(char *string, char is_over)
-{
-    printf("\rResult: [ %s ]", string);
-    if(is_over)
-        putchar('\n');
-}
-
 static SpeechRecognition *g_pRecognizer = nullptr;
 static char *g_result = nullptr;
 static unsigned int g_buffersize = BUFFER_SIZE;
+
+static void show_result(char *string, char /*is_over*/)
+{
+    std::shared_ptr<SpeechMsg> msg = std::make_shared<SpeechMsg>();
+    msg->m_strSender = "";
+    msg->m_strText = string;
+    g_pRecognizer->m_rApplication.PublishMsg(Application::Publish_Speech, msg);
+    //printf("\rResult: [ %s ]", string);
+//    if(is_over)
+//        putchar('\n');
+}
 
 void on_result(const char *result, char is_last)
 {
@@ -62,7 +67,8 @@ void on_speech_end(int reason)
         g_pRecognizer->Restart();
 }
 
-SpeechRecognition::SpeechRecognition()
+SpeechRecognition::SpeechRecognition(Application &rApplication)
+    : m_rApplication(rApplication)
 {
     g_pRecognizer = this;
 }

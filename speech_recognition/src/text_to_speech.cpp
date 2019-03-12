@@ -4,8 +4,10 @@
 #include "speech_recognition/qtts.h"
 #include "speech_recognition/msp_cmn.h"
 #include "speech_recognition/msp_errors.h"
+#include "speech_recognition/application.h"
 
-TextToSpeech::TextToSpeech()
+TextToSpeech::TextToSpeech(Application &rApplication)
+    : m_rApplication(rApplication)
 {
 
 }
@@ -22,7 +24,7 @@ void TextToSpeech::Stop()
     m_pThreadToSpeech->join();
 }
 
-void TextToSpeech::PostTextMsg(const std::string &msg)
+void TextToSpeech::PostTextMsg(const std::shared_ptr<SpeechMsg> msg)
 {
     {
         std::lock_guard<std::mutex> lock(m_mutexMsg);
@@ -32,29 +34,31 @@ void TextToSpeech::PostTextMsg(const std::string &msg)
     m_cvMsg.notify_one();
 }
 
-std::string TextToSpeech::GetTextMsg()
+std::shared_ptr<SpeechMsg> TextToSpeech::GetTextMsg()
 {
     std::unique_lock<std::mutex> lock(m_mutexMsg);
     m_cvMsg.wait(lock, [this](){
         return m_listMsgText.size() > 0;
     });
 
-    std::string text;
+    std::shared_ptr<SpeechMsg> msg;
     if (m_listMsgText.size() > 0)
     {
-        text = m_listMsgText.front();
+        msg = m_listMsgText.front();
         m_listMsgText.pop_front();
     }
-    return text;
+    return msg;
 }
 
 void TextToSpeech::OnThreadToSpeech()
 {
     m_bFlagSpeech = true;
     while (m_bFlagSpeech) {
-        std::string text = this->GetTextMsg();
+        std::shared_ptr<SpeechMsg> msg = this->GetTextMsg();
         std::string speech;
-        this->ToSpeech(text, speech);
+        this->ToSpeech(msg->m_strText, speech);
+        msg->m_strText = speech;
+        m_rApplication.PublishMsg(Application::Publish_Speech, msg);
     }
 }
 

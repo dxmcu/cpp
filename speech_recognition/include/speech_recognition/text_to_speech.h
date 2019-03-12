@@ -9,27 +9,36 @@
 #include <list>
 #include <atomic>
 
+class Application;
+
+struct SpeechMsg
+{
+    std::string m_strSender;
+    std::string m_strText;
+};
+
 class TextToSpeech
 {
 public:
-    TextToSpeech();
+    TextToSpeech(Application &);
 
     void Start();
     void Stop();
+    void PostTextMsg(const std::shared_ptr<SpeechMsg>);
 
 protected:
     void OnThreadToSpeech();
     int ToSpeech(const std::string &, std::string &);
 
-    void PostTextMsg(const std::string &);
-    std::string GetTextMsg();
+    std::shared_ptr<SpeechMsg> GetTextMsg();
 
 private:
     std::unique_ptr<std::thread> m_pThreadToSpeech;
     std::atomic_bool m_bFlagSpeech;
     std::mutex m_mutexMsg;
     std::condition_variable m_cvMsg;
-    std::list<std::string> m_listMsgText;
+    std::list<std::shared_ptr<SpeechMsg>> m_listMsgText;
+    Application &m_rApplication;
 };
 
 #endif // TEXT_TO_SPEECH_H
