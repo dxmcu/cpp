@@ -21,7 +21,7 @@ static void show_result(char *string, char /*is_over*/)
     msg->m_strSender = "";
     msg->m_strText = string;
     g_pRecognizer->m_rApplication.PublishMsg(Application::Publish_Speech, msg);
-    //printf("\rResult: [ %s ]", string);
+    std::cout << "Result: " << string << std::endl;
 //    if(is_over)
 //        putchar('\n');
 }
@@ -54,7 +54,7 @@ void on_speech_begin()
     g_buffersize = BUFFER_SIZE;
     memset(g_result, 0, g_buffersize);
 
-    printf("Start Listening...\n");
+    std::cout << "Start Listening..." << std::endl;
 }
 void on_speech_end(int reason)
 {

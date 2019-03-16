@@ -70,7 +70,7 @@ void Application::OnSubsribe(std_msgs::msg::String::UniquePtr message)
     }
 }
 
-void Application::PublishMsg(int index, const std::shared_ptr<SpeechMsg> msg)
+void Application::PublishMsg(std::size_t index, const std::shared_ptr<SpeechMsg> msg)
 {
     Json::Value root;
     Json::Value content;
@@ -85,6 +85,6 @@ void Application::PublishMsg(int index, const std::shared_ptr<SpeechMsg> msg)
 
     auto message = std_msgs::msg::String();
     message.data = strMsg;
-    m_pTranslate->PublishMsg(0, message);
+    m_pTranslate->PublishMsg(index, message);
 }
 

@@ -21,7 +21,7 @@ public:
     void Start(const std::string &, const std::string &, const std::string &);
     void Stop();
 
-    void PublishMsg(int, const std::shared_ptr<SpeechMsg>);
+    void PublishMsg(std::size_t, const std::shared_ptr<SpeechMsg>);
 
 protected:
     void OnSubsribe(std_msgs::msg::String::UniquePtr);
