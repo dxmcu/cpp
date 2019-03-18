@@ -43,6 +43,7 @@ void Application::Stop()
 void Application::OnSubsribe(std_msgs::msg::String::UniquePtr message)
 {
     std::string text = message->data;
+    std::cout << "#### " << text << std::endl;
 
     Json::Reader reader;
     Json::Value root;
@@ -56,14 +57,10 @@ void Application::OnSubsribe(std_msgs::msg::String::UniquePtr message)
     std::string strReceiver = receiver.asString();
     std::string strEventName = eventName.asString();
 
-    if (strReceiver != m_pTranslate->get_name())
-    {
-        return;
-    }
-
     if (strEventName == "TextToSpeech")
     {
         std::string strText = content.asString();
+        std::cout << "### text: " << strText << std::endl;
         std::shared_ptr<SpeechMsg> msg = std::make_shared<SpeechMsg>();
         msg->m_strSender = strSender;
         msg->m_strText = strText;
