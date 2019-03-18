@@ -14,16 +14,19 @@
 static SpeechRecognition *g_pRecognizer = nullptr;
 static char *g_result = nullptr;
 static unsigned int g_buffersize = BUFFER_SIZE;
+static std::string g_strResult;
 
-static void show_result(char *string, char /*is_over*/)
+static void show_result(char *string, char is_over)
 {
-    std::shared_ptr<SpeechMsg> msg = std::make_shared<SpeechMsg>();
-    msg->m_strSender = "";
-    msg->m_strText = string;
-    g_pRecognizer->m_rApplication.PublishMsg(Application::Publish_Speech, msg);
-    std::cout << "Result: " << string << std::endl;
-//    if(is_over)
-//        putchar('\n');
+    g_strResult.assign(string);
+    if (is_over && !g_strResult.empty()) {
+        std::shared_ptr<SpeechMsg> msg = std::make_shared<SpeechMsg>();
+        msg->m_strSender = "";
+        msg->m_strText = g_strResult;
+        g_pRecognizer->m_rApplication.PublishMsg(Application::Publish_Recognition, msg);
+        std::cout << "Result: " << g_strResult << std::endl;
+        g_strResult.clear();
+    }
 }
 
 void on_result(const char *result, char is_last)
@@ -59,9 +62,9 @@ void on_speech_begin()
 void on_speech_end(int reason)
 {
     if (reason == END_REASON_VAD_DETECT)
-        printf("\nSpeaking done \n");
+        printf("Speaking done \n");
     else
-        printf("\nRecognizer error %d\n", reason);
+        printf("Recognizer error %d\n", reason);
 
     if (nullptr != g_pRecognizer)
         g_pRecognizer->Restart();

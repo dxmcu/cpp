@@ -31,6 +31,7 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt5Core)
 find_package(Qt5Widgets)
 find_package(Qt5Gui)
+find_package(Qt5Multimedia)
 
 FILE(GLOB SRC_FILES "src/*.cpp")
 FILE(GLOB HEAD_FILES "include/*.h")
@@ -39,7 +40,7 @@ add_executable(speech_test ${SRC_FILES} ${HEAD_FILES} ${RCC_FILES} ${UI_FILES} c
 
 ament_target_dependencies(speech_test rclcpp std_msgs)
 
-qt5_use_modules(speech_test Core Gui Widgets)
+qt5_use_modules(speech_test Core Gui Widgets Multimedia)
 target_link_libraries(speech_test jsoncpp)
 
 target_include_directories(speech_test PUBLIC

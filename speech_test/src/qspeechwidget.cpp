@@ -10,21 +10,26 @@ QSpeechWidget::QSpeechWidget(QWidget *parent, const QString &publish, const QStr
 
     std::string str = publish.toStdString();
     std::string str2 = subscribe.toStdString();
-    std::cout << "#### " << str << " " << str2 << std::endl;
+
+    QAudioFormat nFormat;
+    nFormat.setSampleRate(16000);
+    nFormat.setSampleSize(50);
+    nFormat.setChannelCount(2);
+    nFormat.setCodec("audio/pcm");
+    nFormat.setByteOrder(QAudioFormat::LittleEndian);
+    nFormat.setSampleType(QAudioFormat::UnSignedInt);
+    m_OutPut = new QAudioOutput(nFormat);
+    m_AudioIo = m_OutPut->start();
 
     std::string nodeName = "_node_speech_test_";
     m_pTranslate = std::make_shared<message::MessageTranslate<
             std_msgs::msg::String,
             std_msgs::msg::String>>(nodeName);
-    std::cout << "#### 1" << std::endl;
     m_pTranslate->CreatePublisher(str);
-    std::cout << "#### 2" << std::endl;
 
     auto fun = std::bind(&QSpeechWidget::OnSubsribe, this,
                          std::placeholders::_1);
     m_pTranslate->CreateSubscriber(str2, fun);
-    std::cout << "#### 3" << std::endl;
-
     m_pTranslate->Spin();
 }
 
@@ -37,7 +42,6 @@ QSpeechWidget::~QSpeechWidget()
 void QSpeechWidget::OnSubsribe(std_msgs::msg::String::UniquePtr message)
 {
     std::string text = message->data;
-    std::cout << text << std::endl;
 
     Json::Reader reader;
     Json::Value root;
@@ -54,6 +58,8 @@ void QSpeechWidget::OnSubsribe(std_msgs::msg::String::UniquePtr message)
     if (strEventName == "TextToSpeech")
     {
         std::string strText = content.asString();
+        std::cout << "### " << strText.length() << std::endl;
+        m_AudioIo->write(strText.c_str(), strText.length());
     }
     else if (strEventName == "SpeechRecognize")
     {
@@ -80,3 +86,4 @@ void QSpeechWidget::on_pushButton_clicked()
     message.data = strMsg;
     m_pTranslate->PublishMsg(0, message);
 }
+

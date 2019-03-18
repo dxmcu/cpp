@@ -26,6 +26,7 @@ void Application::Start(const std::string &nodeName, const std::string &publishe
             std_msgs::msg::String,
             std_msgs::msg::String>>(nodeName);
     m_pTranslate->CreatePublisher(publisher);
+
     auto fun = std::bind(&Application::OnSubsribe, this,
                          std::placeholders::_1);
     m_pTranslate->CreateSubscriber(subscriber, fun);
@@ -85,6 +86,6 @@ void Application::PublishMsg(std::size_t index, const std::shared_ptr<SpeechMsg>
 
     auto message = std_msgs::msg::String();
     message.data = strMsg;
-    m_pTranslate->PublishMsg(index, message);
+    m_pTranslate->PublishMsg(0, message);
 }
 

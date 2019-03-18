@@ -2,6 +2,7 @@
 #define QSPEECHWIDGET_H
 
 #include <QWidget>
+#include <QAudioOutput>
 #include "common/messagetranslate.hpp"
 
 namespace Ui {
@@ -26,6 +27,9 @@ private slots:
 private:
     Ui::QSpeechWidget *ui;
     std::shared_ptr<message::MessageTranslate<>> m_pTranslate;
+
+    QAudioOutput *m_OutPut;
+    QIODevice *m_AudioIo;
 };
 
 #endif // QSPEECHWIDGET_H
