@@ -1,3 +1,4 @@
+#include <QBuffer>
 #include <jsoncpp/json/json.h>
 #include "qspeechwidget.h"
 #include "ui_qspeechwidget.h"
@@ -18,7 +19,7 @@ QSpeechWidget::QSpeechWidget(QWidget *parent, const QString &publish, const QStr
     nFormat.setCodec("audio/pcm");
     nFormat.setByteOrder(QAudioFormat::LittleEndian);
     nFormat.setSampleType(QAudioFormat::UnSignedInt);
-    m_OutPut = new QAudioOutput(nFormat);
+    m_OutPut = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), nFormat);
     m_AudioIo = m_OutPut->start();
 
     std::string nodeName = "_node_speech_test_";
@@ -58,8 +59,21 @@ void QSpeechWidget::OnSubsribe(std_msgs::msg::String::UniquePtr message)
     if (strEventName == "TextToSpeech")
     {
         std::string strText = content.asString();
-        std::cout << "### " << strText.length() << std::endl;
-        m_AudioIo->write(strText.c_str(), strText.length());
+        if (strText.length() > 0)
+        {
+            QByteArray array = strText.data();
+            QBuffer buffer(&array);
+            buffer.open(QIODevice::ReadWrite);
+            QAudioFormat nFormat;
+            nFormat.setSampleRate(16000);
+            nFormat.setSampleSize(50);
+            nFormat.setChannelCount(2);
+            nFormat.setCodec("audio/pcm");
+            nFormat.setByteOrder(QAudioFormat::LittleEndian);
+            nFormat.setSampleType(QAudioFormat::UnSignedInt);
+
+            m_OutPut->start(&buffer);
+        }
     }
     else if (strEventName == "SpeechRecognize")
     {

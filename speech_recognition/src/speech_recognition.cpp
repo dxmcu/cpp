@@ -24,7 +24,7 @@ static void show_result(char *string, char is_over)
         msg->m_strSender = "";
         msg->m_strText = g_strResult;
         g_pRecognizer->m_rApplication.PublishMsg(Application::Publish_Recognition, msg);
-        std::cout << "Result: " << g_strResult << std::endl;
+        //std::cout << "Result: " << g_strResult << std::endl;
         g_strResult.clear();
     }
 }
@@ -57,12 +57,12 @@ void on_speech_begin()
     g_buffersize = BUFFER_SIZE;
     memset(g_result, 0, g_buffersize);
 
-    std::cout << "Start Listening..." << std::endl;
+    //std::cout << "Start Listening..." << std::endl;
 }
 void on_speech_end(int reason)
 {
     if (reason == END_REASON_VAD_DETECT)
-        printf("Speaking done \n");
+        ;//printf("Speaking done \n");
     else
         printf("Recognizer error %d\n", reason);
 
