@@ -10,8 +10,8 @@
 
 #include <memory>
 #include <boost/asio.hpp>
-#include "SeerProtocol.h"
-#include "SeerSession.hpp"
+#include "chassis_protocol.h"
+#include "chassis_session.hpp"
 
 #include <string.h>
 #include <boost/asio.hpp>
@@ -26,12 +26,15 @@ typedef boost::shared_ptr<session> session_ptr;
 
 class Server {
 public:
-	Server(boost::asio::io_service &io_service, tcp::endpoint &endpoint, tcp::endpoint &endpoint2);
+    Server(boost::asio::io_service &io_service, tcp::endpoint &endpoint, tcp::endpoint &endpoint2,
+           tcp::endpoint &endpoint3, tcp::endpoint &endpoint4);
 	virtual ~Server();
 
 public:
 	void handle_accept(session_ptr new_session, const boost::system::error_code& error);
     void handle_accept2(session_ptr new_session, const boost::system::error_code& error);
+    void handle_accept3(session_ptr new_session, const boost::system::error_code& error);
+    void handle_accept4(session_ptr new_session, const boost::system::error_code& error);
     void run();
 
 
@@ -39,7 +42,8 @@ private:
         boost::asio::io_service &io_service_;
         tcp::acceptor acceptor_;
         tcp::acceptor acceptor2_;
-
+        tcp::acceptor acceptor3_;
+        tcp::acceptor acceptor4_;
 };
 
 #endif /* SEERSERVER_H_ */
