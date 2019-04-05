@@ -8,9 +8,9 @@
 #include <boost/assert.hpp>
 #include "chassis_server.h"
 
-float session::xpos_ = 0;
-float session::ypos_ = 0;
-float session::angle_ = 0;
+double session::xpos_ = 0;
+double session::ypos_ = 0;
+double session::angle_ = 0;
 
 Server::Server(boost::asio::io_service &io_service, tcp::endpoint &endpoint, tcp::endpoint &endpoint2,
                tcp::endpoint &endpoint3, tcp::endpoint &endpoint4)
@@ -93,8 +93,8 @@ void Server::handle_accept3(session_ptr new_session, const boost::system::error_
 
     new_session->start();
     new_session.reset(new session(io_service_));
-    acceptor2_.async_accept(new_session->socket(),
-        boost::bind(&Server::handle_accept2,
+    acceptor3_.async_accept(new_session->socket(),
+        boost::bind(&Server::handle_accept3,
         this,
         new_session,
         boost::asio::placeholders::error));
@@ -109,8 +109,8 @@ void Server::handle_accept4(session_ptr new_session, const boost::system::error_
 
     new_session->start();
     new_session.reset(new session(io_service_));
-    acceptor2_.async_accept(new_session->socket(),
-        boost::bind(&Server::handle_accept2,
+    acceptor4_.async_accept(new_session->socket(),
+        boost::bind(&Server::handle_accept4,
         this,
         new_session,
         boost::asio::placeholders::error));
