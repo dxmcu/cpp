@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.0)
+
+add_definitions(-DBOOST_LOG_DYN_LINK)
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+add_executable(seerserver SeerMain.cpp)
+target_sources(seerserver PRIVATE SeerServer.cpp)
+target_sources(seerserver PRIVATE SeerSession.hpp)
+target_link_libraries(seerserver rt)
+target_link_libraries(seerserver pthread)
+target_link_libraries(seerserver boost_log)
+target_link_libraries(seerserver boost_thread)
+target_link_libraries(seerserver boost_system)
+target_link_libraries(seerserver boost_log_setup)
+target_link_libraries(seerserver jsoncpp)
