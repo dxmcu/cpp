@@ -131,7 +131,6 @@ private:
     void read_body(boost::system::error_code errCode, std::size_t size) {
         if(!errCode) {
             BOOST_ASSERT(buffer_.size() == size);
-            std::cout << "Recive Body len: " << msgrecv_->m_proHeader.m_length << std::endl;
             msgrecv_->m_strJsonBody.assign(buffer_.data(), buffer_.size());
             send_msg();
         }
@@ -141,9 +140,6 @@ private:
     }
     void send_msg() {
         SetResponseMsg();
-        std::cout << "Send data: " << "  Body len: " << msgsend_->m_proHeader.m_length << \
-                     "  Type: " << msgsend_->m_proHeader.m_type << " number: " << msgsend_->m_proHeader.m_number << \
-                     "  sync: " << (int)msgsend_->m_proHeader.m_sync << std::endl;
         uint32_t uLength = msgsend_->m_proHeader.m_length;
         msgsend_->HtoN();
 
@@ -151,7 +147,6 @@ private:
 
         if(uLength > 0)
         {
-            std::cout << "string length: " << msgsend_->m_strJsonBody.size() << " header size: " << uLength << std::endl;
             BOOST_ASSERT(msgsend_->m_strJsonBody.size() == uLength);
             //vecBufs.push_back(boost::asio::const_buffer(msgsend_->m_strJsonBody.c_str(), msgsend_->m_strJsonBody.size()));
             data.append(msgsend_->m_strJsonBody);
@@ -164,7 +159,6 @@ private:
     void handle_write(boost::system::error_code errCode, std::size_t size) {
         if(!errCode)
         {
-            std::cout << "send data len: " << size << std::endl << std::endl;;
             start_read();
         }
         else
@@ -324,18 +318,20 @@ private:
             Json::Value root;
             if(!reader.parse(msgrecv_->m_strJsonBody, root)) return;
             std::string strMapName = root["map_name"].asString();
+            if (root["current_map"].asBool())
+                strMapName = "map_2";
 
             Json::Value data;
             Json::Value header;
             header["map_name"] = strMapName;
             header["map_type"] = "2D-Map";
             Json::Value max_pos;
-            max_pos["x"] = 19.7999992370605;
-            max_pos["y"] = 19.7999992370605;
+            max_pos["x"] = 19.47;
+            max_pos["y"] = 9.39;
             header["max_pos"] = max_pos;
             Json::Value min_pos;
-            max_pos["x"] = 19.7999992370605;
-            max_pos["y"] = 19.7999992370605;
+            min_pos["x"] = 1.23;
+            min_pos["y"] = -3.80;
             header["min_pos"] = min_pos;
             header["resolution"] = 0.0500000007450581;
             header["encode"] = "data:image/png;base64,";
@@ -363,8 +359,8 @@ private:
             waypoints.append(item2);
 
             Json::Value item3;
-            item2["name"] = "p3";
-            item2["type"] = "nav_point";
+            item3["name"] = "p3";
+            item3["type"] = "nav_point";
             Json::Value pos3;
             pos3["x"] = 20.5;
             pos3["y"] = 12.3;
@@ -377,7 +373,7 @@ private:
 
             Json::StreamWriterBuilder builder;
             builder["indentation"] = "";
-            std::string strData = Json::writeString(builder, root);
+            std::string strData = Json::writeString(builder, data);
 
             msgsend_->m_proHeader.m_length = strData.length();
             msgsend_->m_strJsonBody = strData;
