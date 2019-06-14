@@ -22,7 +22,7 @@ def generate_launch_description():
         launch_ros.actions.Node(
             package='speech_recognition', node_executable='speech_recognition', arguments=['-n', 'bkg_speech_node',
             '-p', 'speech_recognition_publish', '-s', 'speech_recognition_subscribe'], output='screen'),
-        launch_ros.actions.Node(
-            package='speech_test', node_executable='speech_test', arguments=[
-            '-p', 'speech_recognition_subscribe', '-s', 'speech_recognition_publish'], output='screen')
+#        launch_ros.actions.Node(
+#            package='speech_test', node_executable='speech_test', arguments=[
+#            '-p', 'speech_recognition_subscribe', '-s', 'speech_recognition_publish'], output='screen')
 ])

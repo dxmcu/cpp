@@ -4,6 +4,7 @@ project(abs_test)
 add_executable(${PROJECT_NAME} "abs_test.cc")
 
 SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "/usr/local/gtest")
+MESSAGE(${CMAKE_PREFIX_PATH}) 
 find_package(GTest REQUIRED)
 
 MESSAGE(${GTEST_MAIN_LIBRARIES})

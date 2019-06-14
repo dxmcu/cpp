@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(speech_test)
+project(speech_synthesis)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -15,41 +15,25 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-add_compile_options(-fpic)
-
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
-
-set(Qt5Core_DIR /opt/Qt5.12.3/5.12.3/gcc_64/lib/cmake/Qt5Core)
-find_package(Qt5Core CONFIG REQUIRED)
-set(Qt5Gui_DIR /opt/Qt5.12.3/5.12.3/gcc_64/lib/cmake/Qt5Gui)
-find_package(Qt5Gui CONFIG REQUIRED)
-set(Qt5Widgets_DIR /opt/Qt5.12.3/5.12.3/gcc_64/lib/cmake/Qt5Widgets)
-find_package(Qt5Widgets CONFIG REQUIRED)
-set(Qt5Multimedia_DIR /opt/Qt5.12.3/5.12.3/gcc_64/lib/cmake/Qt5Multimedia)
-find_package(Qt5Multimedia CONFIG REQUIRED)
-
-FILE(GLOB SRC_FILES "src/*.cpp")
-FILE(GLOB HEAD_FILES "include/*.h")
-FILE(GLOB UI_FILES "src/*.ui")
-add_executable(speech_test ${SRC_FILES} ${HEAD_FILES} ${RCC_FILES} ${UI_FILES} common/messagetranslate.hpp)
-
-ament_target_dependencies(speech_test rclcpp std_msgs)
-
-target_link_libraries(speech_test Qt5::Widgets Qt5::Multimedia jsoncpp)
-
-target_include_directories(speech_test PUBLIC
+add_executable(speech_synthesis src/main.cpp)
+ament_target_dependencies(speech_synthesis rclcpp std_msgs)
+target_include_directories(speech_synthesis PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../common>
   $<INSTALL_INTERFACE:include>)
 
-install(TARGETS speech_test
+target_sources(speech_synthesis PRIVATE src/speech_synthesis.cpp)
+target_sources(speech_synthesis PRIVATE src/speech_application.cpp)
+target_sources(speech_synthesis PRIVATE ../common/messagetranslate.hpp)
+
+target_link_libraries(speech_synthesis msc)
+
+install(TARGETS speech_synthesis
   EXPORT export_${PROJECT_NAME}
   DESTINATION lib/${PROJECT_NAME})
 
