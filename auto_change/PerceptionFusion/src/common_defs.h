@@ -1,10 +1,8 @@
 #pragma once
-#include <memory>
-#include <string>
-#include <vector>
 
 #include "Eigen/Core"
 #include "data_struct_define.h"
+
 struct MlfPredict {
 	Eigen::VectorXf state;
 	double timestamp;

@@ -1,4 +1,5 @@
 ﻿#include "VectorUtil.h"
+#include "data_struct_define.h"
 
 using namespace std;
 double DeepBlue::CVectorUtil::dbl_precesion = 1e-8;
@@ -63,9 +64,9 @@ bool  DeepBlue::CVectorUtil::Extent2dIntersected(Extent2D e1, Extent2D e2)
 * @param y2
 * @param scale : the scale factor to make coordinates long
 * @return the relation of these two segment
-* 0 - not intersect ���ཻ
-* 1 - intersect �ཻ
-* 2 - coline ����
+* 0 - not intersect
+* 1 - intersect
+* 2 - coline
 */
 int DeepBlue::CVectorUtil::TwoLineSegmentsRelDetect(double px1, double py1, double px2, double py2, double qx1, double qy1, double qx2, double qy2, GeomPoint& pt)
 {
