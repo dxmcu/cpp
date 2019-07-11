@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -46,6 +47,7 @@ bool CFusioner::InitializedZmq()
   while ((zmq_connect(g_z_socket, "tcp://127.0.0.1:7777") > 0))
   {
     printf("waiting datapool service......\n");
+    usleep(10000);
   }
   return true;
 }

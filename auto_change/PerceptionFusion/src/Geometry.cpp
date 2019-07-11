@@ -8,17 +8,15 @@
 
 #include "VectorUtil.h"
 
-using namespace std;
 using namespace DeepBlue;
-
 
 //Implementation of Envlope
 DeepBlue::Envelope::Envelope()
 {
-  left = numeric_limits<float>::max();
-  right = -numeric_limits<float>::max();
-  top = -numeric_limits<float>::max();
-  bottom = numeric_limits<float>::max();
+  left = std::numeric_limits<float>::max();
+  right = -std::numeric_limits<float>::max();
+  top = -std::numeric_limits<float>::max();
+  bottom = std::numeric_limits<float>::max();
 }
 DeepBlue::Envelope::Envelope(double l, double r, double t, double b){
   left = l;
@@ -34,8 +32,8 @@ bool DeepBlue::Envelope::isValid()
     else
       return true;
   }
-  catch (exception& e){
-    cout << e.what() << endl;
+  catch (std::exception& e){
+    std::cout << e.what() << std::endl;
     return false;
   }
 }
@@ -70,13 +68,15 @@ bool DeepBlue::Envelope::contains(double x, double y)
 }
 bool DeepBlue::Envelope::contains(double x1, double y1, double x2, double y2)
 {
-  if (min(x1, x2) > left && max(x1, x2) < right && max(y1, y2) < top && min(y1, y2) > bottom)
+  if (std::min(x1, x2) > left && std::max(x1, x2) < right && std::max(y1, y2) < top &&
+      std::min(y1, y2) > bottom)
     return true;
   return false;
 }
 bool DeepBlue::Envelope::intersected(double x1, double y1, double x2, double y2)
 {
-  if (max(x1, x2) < left || min(x1, x2) > right || min(y1, y2) > top || max(y1, y2) < bottom)
+  if (std::max(x1, x2) < left || std::min(x1, x2) > right || std::min(y1, y2) > top ||
+      std::max(y1, y2) < bottom)
     return false;
   return true;
 }
@@ -231,10 +231,10 @@ DeepBlue::GeomLine::GeomLine(double*  px, double*  py, int pointscount)
 
   for (int i = 0; i < pointscount; i++){
     points.push_back(new GeomPoint(px[i], py[i]));
-    envlope.left = min(envlope.left, px[i]);
-    envlope.right = max(envlope.right, px[i]);
-    envlope.top = max(envlope.top, py[i]);
-    envlope.bottom = min(envlope.bottom, py[i]);
+    envlope.left = std::min(envlope.left, px[i]);
+    envlope.right = std::max(envlope.right, px[i]);
+    envlope.top = std::max(envlope.top, py[i]);
+    envlope.bottom = std::min(envlope.bottom, py[i]);
   }
 }
 int DeepBlue::GeomLine::getSize()
@@ -252,16 +252,16 @@ DeepBlue::GeomPoint* DeepBlue::GeomLine::getRef(int index)
 void DeepBlue::GeomLine::add(double x, double y)
 {
   points.push_back(new GeomPoint(x, y));
-  envlope.left = min(envlope.left, x);
-  envlope.right = max(envlope.right, x);
-  envlope.top = max(envlope.top, y);
-  envlope.bottom = min(envlope.bottom, y);
+  envlope.left = std::min(envlope.left, x);
+  envlope.right = std::max(envlope.right, x);
+  envlope.top = std::max(envlope.top, y);
+  envlope.bottom = std::min(envlope.bottom, y);
 }
 void DeepBlue::GeomLine::insert(int index, double x, double y){
-  envlope.left = min(envlope.left, x);
-  envlope.right = max(envlope.right, x);
-  envlope.top = max(envlope.top, y);
-  envlope.bottom = min(envlope.bottom, y);
+  envlope.left = std::min(envlope.left, x);
+  envlope.right = std::max(envlope.right, x);
+  envlope.top = std::max(envlope.top, y);
+  envlope.bottom = std::min(envlope.bottom, y);
   std::vector<GeomPoint*>::iterator pos = points.begin();
   pos += index;
   points.insert(pos, new GeomPoint(x, y));
@@ -298,10 +298,10 @@ DeepBlue::GeomPolygon::GeomPolygon(double*  px, double*  py, int pointscount)
 
   for (int i = 0; i < pointscount; i++){
     points.push_back(new GeomPoint(px[i], py[i]));
-    envlope.left = min(envlope.left, px[i]);
-    envlope.right = max(envlope.right, px[i]);
-    envlope.top = max(envlope.top, py[i]);
-    envlope.bottom = min(envlope.bottom, py[i]);
+    envlope.left = std::min(envlope.left, px[i]);
+    envlope.right = std::max(envlope.right, px[i]);
+    envlope.top = std::max(envlope.top, py[i]);
+    envlope.bottom = std::min(envlope.bottom, py[i]);
   }
 }
 int DeepBlue::GeomPolygon::getSize()
@@ -319,17 +319,17 @@ DeepBlue::GeomPoint* DeepBlue::GeomPolygon::getRef(int index)
 void DeepBlue::GeomPolygon::add(double x, double y)
 {
   points.push_back(new GeomPoint(x, y));
-  envlope.left = min(envlope.left, x);
-  envlope.right = max(envlope.right, x);
-  envlope.top = max(envlope.top, y);
-  envlope.bottom = min(envlope.bottom, y);
+  envlope.left = std::min(envlope.left, x);
+  envlope.right = std::max(envlope.right, x);
+  envlope.top = std::max(envlope.top, y);
+  envlope.bottom = std::min(envlope.bottom, y);
 }
 
 void DeepBlue::GeomPolygon::insert(int index, double x, double y){
-  envlope.left = min(envlope.left, x);
-  envlope.right = max(envlope.right, x);
-  envlope.top = max(envlope.top, y);
-  envlope.bottom = min(envlope.bottom, y);
+  envlope.left = std::min(envlope.left, x);
+  envlope.right = std::max(envlope.right, x);
+  envlope.top = std::max(envlope.top, y);
+  envlope.bottom = std::min(envlope.bottom, y);
   std::vector<GeomPoint*>::iterator pos = points.begin();
   pos += index;
   points.insert(pos, new GeomPoint(x, y));
@@ -348,10 +348,10 @@ void DeepBlue::GeomPolygon::remove(int index)
 //Rectangle start here
 Rectangle::Rectangle()
 {
-  left = numeric_limits<int>::max();
-  right = -numeric_limits<int>::max();
-  top = numeric_limits<int>::max();
-  bottom = -numeric_limits<int>::max();
+  left = std::numeric_limits<int>::max();
+  right = -std::numeric_limits<int>::max();
+  top = std::numeric_limits<int>::max();
+  bottom = -std::numeric_limits<int>::max();
 }
 int Rectangle::width()
 {
