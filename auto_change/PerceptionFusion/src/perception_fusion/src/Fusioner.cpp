@@ -5,23 +5,28 @@
 #include "Fusioner.h"
 #include "Tracker.h"
 #include "zmq.h"
+#include "std_msgs/String.h"
 
-#pragma warning(disable:4996)  //neglect json::fasterwriter outdate warning
+//#pragma warning(disable:4996)  //neglect json::fasterwriter outdate warning
 
 CFusioner::CFusioner()
 {
+  // ros
+  m_pNodeHandle.reset(new ros::NodeHandle);
+  m_dataPub = m_pNodeHandle->advertise<std_msgs::String>("debug_tool_perception_data_send_data",
+                                                         1000);
+
   //将请求预先打包成Json格式
-  std::unique_ptr<Json::StreamWriter> jsonWriter(writerBuilder.newStreamWriter());
+  Json::Value reqDataContext;
   reqDataContext["TYPE"] = "REQ_PERCEPTION_DATA_LOCAL";
-  std::ostringstream os;
-  jsonWriter->write(reqDataContext, &os);
-  str_request_send = os.str();
+  Json::StreamWriterBuilder builder;
+  builder["indentation"] = "";
+  str_request_send = Json::writeString(builder, reqDataContext);
+
   enable_debug = false;
-
-  tracker = new CTracker();
-
   g_z_context = nullptr;
   g_z_socket = nullptr;
+  tracker = new CTracker();
 }
 
 CFusioner::~CFusioner()
@@ -160,6 +165,22 @@ bool CFusioner::SendFusedResult()
   std::memcpy(zmq_msg_data(&send_msg), str_send.c_str(), n + 1);
   zmq_sendmsg(g_z_socket, &send_msg, 0);
   zmq_msg_close(&send_msg);
+  return true;
+}
+bool CFusioner::SendFusedResultRos()
+{
+  Json::Value rep;
+  Json::FastWriter writer;
+
+  rep["TYPE"] = "PUSH_UPDATE";
+  rep["DATA"] = funsion_output_;
+  std::string str_send = writer.write(rep);
+
+  std_msgs::String msg;
+  msg.data = str_send;
+  m_dataPub.publish(msg);
+
+  ros::spinOnce();
   return true;
 }
 bool CFusioner::ReceiveNotifyInfo()

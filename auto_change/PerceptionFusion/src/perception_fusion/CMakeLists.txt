@@ -1,7 +1,25 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8.3)
 project(perception_fusion)
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+add_compile_options(-std=c++11)
+
+## Find catkin macros and libraries
+## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
+## is used, also find other catkin packages
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  std_msgs
+)
+
+## System dependencies are found with CMake's conventions
+# find_package(Boost REQUIRED COMPONENTS system)
+
+catkin_package()
+
+include_directories(
+# include
+  ${catkin_INCLUDE_DIRS}
+)
 
 include_directories(/usr/include/eigen3)
 include_directories(/usr/local/glog/include)
@@ -28,3 +46,4 @@ target_link_libraries(perception_fusion config)
 target_link_libraries(perception_fusion boost_system)
 target_link_libraries(perception_fusion boost_filesystem)
 
+target_link_libraries(perception_fusion ${catkin_LIBRARIES})

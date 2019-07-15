@@ -8,6 +8,7 @@
 int main(int argc, char* argv[])
 {
   std::cout << "Enter the Percetion Fusion Module" << std::endl;
+  ros::init(argc, argv, "debug_tool_perception_fusion_data_node");
 
   bool local_logs_debug = true;
   int send_status = 0;
@@ -52,11 +53,14 @@ int main(int argc, char* argv[])
     }
     // 向DATAPOOL发送融合结果
     if (send_status == 2)        {
-      if (!fusioner.SendFusedResult())            {
+      if (!fusioner.SendFusedResultRos())            {
         std::cout << "critical unrecoverable erros , exit！" << std::endl;
         return 0;
       }
-      send_status = 3;
+      if (!local_logs_debug)
+        send_status = 0;
+      else
+        send_status = 1;
     }
     // 接受DATAPOOL返回的接受回执
     if (send_status == 3)        {

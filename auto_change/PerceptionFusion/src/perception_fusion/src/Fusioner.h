@@ -9,6 +9,7 @@
 #pragma once
 
 #include <jsoncpp/json/json.h>
+#include <ros/ros.h>
 
 class CTracker;
 
@@ -23,6 +24,7 @@ public:
   bool ReceivePerceptionData();
   bool DoFuse(bool fuse_flag = false);
   bool SendFusedResult();
+  bool SendFusedResultRos();
   bool ReceiveNotifyInfo();
   void EnableDebug();
   void InitData();
@@ -33,17 +35,19 @@ public:
 protected:
   bool enable_debug;
   Json::Value updated_perception_value;
-  Json::Value reqDataContext;
 
   Json::Value recv_gps_;
   Json::Value recv_keep_data_;
   Json::Value recv_ultrasound_;
   Json::Value recv_sense_;
 
-  Json::StreamWriterBuilder writerBuilder;
   std::string str_request_send;
   void* g_z_socket;
   void* g_z_context;
   CTracker* tracker;
+
+  // ros
+  std::shared_ptr<ros::NodeHandle> m_pNodeHandle;
+  ros::Publisher m_dataPub;
 };
 
